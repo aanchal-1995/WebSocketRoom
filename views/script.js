@@ -11,9 +11,13 @@ button.disabled= true
 button.addEventListener('click', sendMessage, false)
 group_id.onkeyup = function(event){
     if(event.keyCode ==13){
-    var name = document.createElement('h1')
+    var name = document.createElement('div')
+    
     name.innerHTML= group_id.value
-    group_name.appendChild( name)}
+    group_name.appendChild( name)
+    
+    group_id.style.display = "none"
+}
 }
 server.onopen = function(){
     // server.send('Hello')
@@ -21,19 +25,25 @@ server.onopen = function(){
 } 
 server.onmessage = function(event){
     const {data}  = event
-    generateMessage(data)
+    const msg = data.substring(0,data.indexOf(':'))
+    const user = data.substring(data.indexOf(':')+1)
+    // console.log(msg)
+    // console.log(user)
+    // const user = handle.value
+    generateMessage(msg, user)
 }
 
-function generateMessage(msg){
+function generateMessage(msg, user){
     const newMessage  = document.createElement('div')
-    newMessage.innerText = `${msg}`
+    newMessage.innerText = `${user}: ${msg}`
     messages.appendChild(newMessage)
     
 }
 
 function sendMessage(){
     const text = input.value
-    generateMessage(text);
-    server.send(text)
+    const user = handle.value
+    generateMessage(text, user);
+    server.send(text+':'+user)
 }
 
